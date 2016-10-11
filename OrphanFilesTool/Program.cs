@@ -53,7 +53,7 @@ namespace OrphanFilesTool
 			Console.WriteLine("Processing directory: " + currentDirectory);
 
 			// Get a list of all files that are possible candidates for removal
-			var allFiles = Directory.GetFiles(currentDirectory, "*.h", SearchOption.AllDirectories)
+			var allFiles = Directory.GetFiles(currentDirectory, "*.cpp", SearchOption.AllDirectories)
 				.ToList()
 				.Select(Path.GetFullPath)
 				.ToArray();
@@ -68,6 +68,7 @@ namespace OrphanFilesTool
 			}
 
 			// Now work out which of the candidate files is not in the list of files referenced by projects
+			int orphanedFileCount = 0;
 			long totalSize = 0;
 			foreach (var candidateFile in candidateFiles)
 			{
@@ -77,12 +78,15 @@ namespace OrphanFilesTool
 
 					var fileInfo = new FileInfo(candidateFile);
 					totalSize += fileInfo.Length;
+					orphanedFileCount++;
 
 					File.Delete(candidateFile);
 				}
 			}
 
-			Console.WriteLine("Number of files: " + candidateFiles.Count);
+			
+			Console.WriteLine("Total number of files on disk: " + allFiles.ToList().Count);
+			Console.WriteLine("Number of orphaned files: " + orphanedFileCount);
 			Console.WriteLine("Total length: " + (totalSize/1024) + " Kb");
 			Console.WriteLine("Total length: " + (totalSize / 1024 / 1024) + " Mb");
 
