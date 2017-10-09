@@ -162,9 +162,15 @@ namespace OrphanFilesTool
 				fileItems.AddRange(itemGroups.Elements(ns + "ClInclude"));
 				foreach (var item in fileItems)
 				{
-					var absFileName = Path.Combine(projectDirectory, item.Attribute("Include").Value);
-					absFileName = Path.GetFullPath(absFileName);
-					filesInProject.Add(absFileName);
+					var fileNameAttribute = item.Attribute("Include");
+					if (fileNameAttribute != null)
+					{
+						var fileName = fileNameAttribute.Value;
+
+						var absFileName = Path.Combine(projectDirectory, fileName);
+						absFileName = Path.GetFullPath(absFileName);
+						filesInProject.Add(absFileName);
+					}
 				}
 			}
 
