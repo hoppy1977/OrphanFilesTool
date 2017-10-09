@@ -11,15 +11,16 @@ namespace OrphanFilesTool
 	{
 		static void Main(string[] args)
 		{
-			if (args.Length != 1)
+			if (args.Length != 2)
 			{
-				Console.WriteLine("Syntax is 'OrphanFilesTool <folder_to_process>'.");
+				Console.WriteLine("Syntax is 'OrphanFilesTool <file_extension> <folder_to_process>'.");
 				Console.WriteLine("Press any key to exit...");
 				Console.ReadKey();
 				return;
 			}
 
-			var rootDirectory = args[0];
+			var extension = args[0].TrimStart('.');
+			var rootDirectory = args[1];
 //			var rootDirectory = @"C:\work\svn\DeadCodeRemoval\windev4\minwsw";
 //			var rootDirectory = @"C:\work\svn\DeadCodeRemoval\minfosStore\Common\dsecpp";
 			if (!Directory.Exists(rootDirectory))
@@ -30,7 +31,7 @@ namespace OrphanFilesTool
 				return;
 			}
 
-			Console.WriteLine("!!! This utility will delete files under '" + rootDirectory + "' !!!");
+			Console.WriteLine("!!! This utility will delete '." + extension + "' files under '" + rootDirectory + "' !!!");
 			Console.WriteLine("Do you want to continue? (Y to continue)...");
 			var input = Console.Read();
 			if (input != 'y' && input != 'Y')
@@ -41,19 +42,19 @@ namespace OrphanFilesTool
 				return;
 			}
 
-			ProcessDirectory(rootDirectory);
+			ProcessDirectory(extension, rootDirectory);
 
 			Console.WriteLine("Processing complete!");
 			Console.WriteLine("Press any key to exit...");
 			Console.ReadKey();
 		}
 
-		static void ProcessDirectory(string currentDirectory)
+		static void ProcessDirectory(string extension, string currentDirectory)
 		{
 			Console.WriteLine("Processing directory: " + currentDirectory);
 
 			// Get a list of all files that are possible candidates for removal
-			var allFiles = Directory.GetFiles(currentDirectory, "*.cpp", SearchOption.AllDirectories)
+			var allFiles = Directory.GetFiles(currentDirectory, "*." + extension, SearchOption.AllDirectories)
 				.ToList()
 				.Select(Path.GetFullPath)
 				.ToArray();
